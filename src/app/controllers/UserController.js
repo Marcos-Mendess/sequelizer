@@ -20,11 +20,12 @@ class UserController {
             },
           },
         ],
+        order: [["name", "ASC"]],
       });
       return res.json(users);
     } catch (error) {
       const message = validateErrors(error);
-      return res.status(400).send(message);
+      throw new Error(message.message);
     }
   }
   async store(req, res) {
@@ -40,38 +41,52 @@ class UserController {
       return res.json(user);
     } catch (error) {
       const message = validateErrors(error);
-      return res.status(400).send(message);
+      throw new Error(message.message);
     }
   }
 
   async show(req, res) {
     const { id } = req.params;
 
-    const user = await User.findByPk(id);
+    try {
+      const user = await User.findByPk(id);
 
-    return res.json(user);
+      return res.json(user);
+    } catch (error) {
+      const message = validateErrors(error);
+      throw new Error(message.message);
+    }
   }
 
   async update(req, res) {
     const { id } = req.params;
     const { name, nickname, email } = req.body;
+    try {
+      const user = await User.findByPk(id);
+      if (user) {
+        user.name = name;
+        user.nickname = nickname;
+        user.email = email;
+      }
+      const userUpdated = await user.save();
 
-    const user = await User.findByPk(id);
-    if (user) {
-      user.name = name;
-      user.nickname = nickname;
-      user.email = email;
+      return res.json(userUpdated);
+    } catch (error) {
+      const message = validateErrors(error);
+      throw new Error(message.message);
     }
-    const userUpdated = await user.save();
-
-    return res.json(userUpdated);
   }
 
   async destroy(req, res) {
     const { id } = req.params;
-    const user = await User.findByPk(id);
-    await user.destroy();
-    return res.json({});
+    try {
+      const user = await User.findByPk(id);
+      await user.destroy();
+      return res.json({});
+    } catch (error) {
+      const message = validateErrors(error);
+      throw new Error(message.message);
+    }
   }
 }
 

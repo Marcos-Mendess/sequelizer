@@ -22,6 +22,13 @@ class Post extends Model {
       as: "user",
     });
   }
+
+  static associate(models) {
+    this.belongsTo(models.Category, {
+      foreignKey: "category_id",
+      as: "category",
+    });
+  }
 }
 
 export default Post;

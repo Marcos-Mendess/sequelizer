@@ -1,4 +1,4 @@
-import { Model, DataTypes } from "Sequelize";
+import { Model, DataTypes } from "sequelize";
 
 class Category extends Model {
   static init(sequelize) {
