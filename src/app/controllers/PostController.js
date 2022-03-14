@@ -1,3 +1,4 @@
+import createPostValidation from "../../validations/Category/post/CreatePostSchema";
 import Post from "../models/Post";
 const { validateErrors } = require("../../utils/functions");
 
@@ -19,16 +20,13 @@ class PostController {
     }
   }
   async store(req, res) {
-    const { title, content, url_cover, category_id, user_id } = req.body;
     try {
-      const data = await Post.create({
-        title,
-        content,
-        url_cover,
-        category_id,
-        user_id,
-      });
-      return res.json(data);
+      const data = req.body;
+      if (!(await createPostValidation.isValid(data))) {
+        throw new Error("Campos inválidos");
+      }
+      const post = await Post.create(data);
+      return res.json(post);
     } catch (error) {
       const message = validateErrors(error);
       return res.status(400).send(message);

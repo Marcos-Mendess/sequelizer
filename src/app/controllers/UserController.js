@@ -9,18 +9,7 @@ class UserController {
     const word = req.query.word ? req.query.word : "";
     try {
       const users = await User.findAll({
-        include: [
-          {
-            association: "posts",
-            where: {
-              title: {
-                [Op.iLike]: `%${word}%`,
-              },
-              status: true,
-            },
-          },
-        ],
-        order: [["name", "ASC"]],
+        order: [["id", "ASC"]],
       });
       return res.json(users);
     } catch (error) {
