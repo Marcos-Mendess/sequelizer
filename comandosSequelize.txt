@@ -1,0 +1,59 @@
+Instalações do projeto : {
+    npm install nodemon sucrase -D 
+    npm add express       
+    npm i sequelize sequelize-cli
+    npm install pg pg-hstore    
+}
+ 
+Comandos do Sequelize : { 
+
+    Criação de migration --> npx sequelize migration:generate --name <nome_do_post>
+
+    Criar uma database no sequelize --> npx sequelize db:create  
+ 
+    Criar um arquivo migration com o nome users --> npx sequelize-cli migration:generate --name users
+
+    Criar as migrations no banco de dados --> npx sequelize db:migrate
+
+
+                                                                                            Controllers
+                                                                                            CRUD
+
+    IndexAll ->  retornar todas as entidades do model User.
+
+    const users = await User.findAll();
+ 
+    Store -> Guardar o usuário via req.body.
+
+    const { name, nickname, email, password_hash } = req.body;       --> desestruturação das constantes enviadas no body.
+    const user = await User.create({name,nickname,email,password_hash}); - Criação do usuário no DB.
+
+
+    Show -> Mostrar um usuário específico via parâmetro
+
+    const { id } = req.params;                                       -->  desustruturando o id para utilizá-lo na busca no DB.
+    const user = await User.findByPk(id);                            -->  Retorna um json com todas as informações do usuário pela primary key (id) .
+
+
+    Update -> Atualizar dado de algum usuário
+    const { id } = req.params;                                       -->  desustruturando o id para utilizá-lo na busca no DB.
+    const { name, nickname, email } = req.body;                      -->  desustruturando o body para utilizá-lo no update das informações
+    const user = await User.findByPk(id);                            -->  Retorna um json com todas as informações do usuário pela primary key (id) .
+    user.name = name; user.nickname = nickname   user.email = email; -->  Setando os novos dados do usuário 
+    const userUpdated = await user.save();                           -->  Atualiza e salva as novas informações do usuário no DB.
+
+
+                                                    Criação de associações
+    Exemplo de associação --> Dentro do modelo dos User, informar que cada User pode possuir vários posts.
+    static associate(models) {
+    this.hasmany(models.Post, {
+      foreignKey: "user_id",
+      as: "posts",
+    });
+  }
+    Após a criação da associação no modelo, ir nas configurações de classe do DB do index localizado na pasta DB.
+    inserir User.associate(this.connection.models);
+}
+
+
+
