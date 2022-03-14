@@ -1,10 +1,13 @@
-import { validateErrors } from "../../utils/functions";
-import Category from "../models/Category";
+const { validateErrors } = require("../../utils/functions");
 
+import Category from "../models/Category";
+import createCategoryValidation from "../../validations/Category/CreateCategorySchema";
 class CategoryController {
   async index(req, res) {
     try {
-      const categories = await Category.findAll();
+      const categories = await Category.findAll({
+        attributes: ["id", "name"],
+      });
       return res.json(categories);
     } catch (error) {
       const message = validateErrors(error);
@@ -13,9 +16,14 @@ class CategoryController {
   }
 
   async store(req, res) {
-    const data = req.body;
+    console.log(req.body);
     try {
-      const category = await Category.create(data);
+      const name = req.body;
+      if (!(await createCategoryValidation.isValid(name))) {
+        return res.json({ message: "Tipo de dado inválido" });
+      }
+
+      const category = await Category.create(name);
       return res.json(category);
     } catch (error) {
       const message = validateErrors(error);
